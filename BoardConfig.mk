@@ -1,19 +1,23 @@
 DEVICE_PATH := device/tecno/KL5
 
-# Architecture - تم تحديثها بناءً على بيانات Termux (arm64-v8a)
+# Architecture - تم التحديث بناءً على نتائج Termux وصورة الخطأ الأخيرة
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-a
 TARGET_CPU_ABI := arm64-v8a
 TARGET_CPU_ABI2 := 
 TARGET_CPU_VARIANT := generic
 
+# هذه الأسطر تحل خطأ 32-bit-app-only الظاهر في الصورة 1000000774.jpg
 TARGET_2ND_ARCH := arm
 TARGET_2ND_ARCH_VARIANT := armv7-a-neon
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
 TARGET_2ND_CPU_VARIANT := generic
 
-# Platform - تم تحديثها لتطابق منصة mt6768 المكتشفة
+# سطر حاسم لحل مشكلة تطبيقات الـ 64 بت
+TARGET_SUPPORTS_64_BIT_APPS := true
+
+# Platform
 TARGET_BOARD_PLATFORM := mt6768
 TARGET_BOARD_SUFFIX := _64
 TARGET_USES_64_BIT_BINDER := true
