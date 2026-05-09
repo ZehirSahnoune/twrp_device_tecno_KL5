@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Preparation
         run: |
@@ -37,7 +37,7 @@ jobs:
           mka recoveryimage -j$(nproc --all)
 
       - name: Upload Result
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: TWRP-KL5-Built
           path: twrp/out/target/product/KL5/recovery.img
