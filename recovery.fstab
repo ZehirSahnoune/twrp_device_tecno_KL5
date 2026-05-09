@@ -1,0 +1,7 @@
+/system       erofs     system      wait,slotselect,logical,first_stage_mount
+/vendor       erofs     vendor      wait,slotselect,logical,first_stage_mount
+/product      erofs     product     wait,slotselect,logical,first_stage_mount
+/metadata     ext4      /dev/block/by-name/metadata   wait,check,formattable
+/data         f2fs      /dev/block/by-name/userdata   wait,check,formattable
+/boot         emmc      /dev/block/by-name/boot       wait,slotselect
+/misc         emmc      /dev/block/by-name/misc       defaults
