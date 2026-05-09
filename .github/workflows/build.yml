@@ -1,4 +1,4 @@
-name: Build TWRP
+name: Build TWRP Final
 on:
   workflow_dispatch:
 
@@ -27,16 +27,19 @@ jobs:
       - name: Build Recovery
         run: |
           export PATH=~/bin:$PATH
-          # إنشاء المجلدات اللازمة وبدء عملية النسخ الذكي لتجنب خطأ التكرار
           mkdir -p twrp/device/tecno/KL5
+          # نسخ ملفات الإعدادات من المستودع إلى بيئة البناء
           find . -maxdepth 1 -not -name 'twrp' -not -name '.' -exec cp -r {} twrp/device/tecno/KL5/ \;
           cd twrp
           source build/envsetup.sh
           lunch twrp_KL5-eng
+          
+          # تجاوز أخطاء فقدان الوحدات (حل مشكلة الصورة 1000000775.jpg)
+          export ALLOW_MISSING_DEPENDENCIES=true
           mka recoveryimage -j$(nproc --all)
 
       - name: Upload Result
         uses: actions/upload-artifact@v4
         with:
-          name: TWRP-KL5-Built
+          name: TWRP-KL5-Custom
           path: twrp/out/target/product/KL5/recovery.img
