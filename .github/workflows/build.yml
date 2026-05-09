@@ -27,9 +27,10 @@ jobs:
       - name: Build Recovery
         run: |
           export PATH=~/bin:$PATH
+          # إنشاء المجلدات اللازمة وبدء عملية النسخ الذكي لتجنب خطأ التكرار
+          mkdir -p twrp/device/tecno/KL5
+          find . -maxdepth 1 -not -name 'twrp' -not -name '.' -exec cp -r {} twrp/device/tecno/KL5/ \;
           cd twrp
-          mkdir -p device/tecno/KL5
-          cp -r ../* device/tecno/KL5/
           source build/envsetup.sh
           lunch twrp_KL5-eng
           mka recoveryimage -j$(nproc --all)
