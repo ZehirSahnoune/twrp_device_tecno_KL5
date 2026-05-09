@@ -4,10 +4,10 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Preparation
         run: |
@@ -16,7 +16,7 @@ jobs:
 
       - name: Install Repo
         run: |
-          mkdir ~/bin
+          mkdir -p ~/bin
           curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
           chmod a+x ~/bin/repo
           export PATH=~/bin:$PATH
@@ -37,7 +37,7 @@ jobs:
           mka recoveryimage -j$(nproc --all)
 
       - name: Upload Result
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4 # تم التحديث إلى v4 لإصلاح الخطأ
         with:
           name: TWRP-KL5-Built
           path: twrp/out/target/product/KL5/recovery.img
