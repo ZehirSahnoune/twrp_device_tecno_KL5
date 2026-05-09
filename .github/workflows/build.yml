@@ -1,4 +1,4 @@
-name: Build TWRP with Debug Output
+name: Build TWRP Absolute Find
 on:
   workflow_dispatch:
 
@@ -28,7 +28,6 @@ jobs:
         run: |
           export PATH=~/bin:$PATH
           mkdir -p twrp/device/tecno/KL5
-          # نسخ ملفات الإعدادات من المستودع
           find . -maxdepth 1 -not -name 'twrp' -not -name '.' -exec cp -r {} twrp/device/tecno/KL5/ \;
           cd twrp
           source build/envsetup.sh
@@ -36,15 +35,15 @@ jobs:
           export ALLOW_MISSING_DEPENDENCIES=true
           mka recoveryimage -j$(nproc --all)
           
-          # --- خطة الطوارئ: تجميع كل مخرجات الصور لضمان عدم ضياعها ---
-          mkdir -p ../final_output
-          find out/target/product/ -type f -name "*.img" -exec cp {} ../final_output/ \;
-          echo "الملفات التي تم العثور عليها:"
-          ls -R ../final_output
+          # طباعة مسارات جميع ملفات الـ img الناتجة للتأكد (ستظهر في السجلات)
+          echo "--- قائمة بجميع ملفات الصور التي تم إنشاؤها ---"
+          find out/target/product/ -name "*.img"
+          echo "------------------------------------------"
 
       - name: Upload Result
         uses: actions/upload-artifact@v4
         with:
-          name: TWRP-Final-Recovery-Package
-          path: final_output/
+          name: TWRP-Absolute-Search
+          # سنطلب من GitHub البحث في مجلد out بالكامل ورفع أي ملف img
+          path: twrp/out/target/product/**/*.img
           if-no-files-found: error
