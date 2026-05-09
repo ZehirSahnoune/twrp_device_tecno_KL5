@@ -1,4 +1,4 @@
-name: Build TWRP Final
+name: Build TWRP with Custom Output
 on:
   workflow_dispatch:
 
@@ -28,17 +28,23 @@ jobs:
         run: |
           export PATH=~/bin:$PATH
           mkdir -p twrp/device/tecno/KL5
+          # نسخ ملفات الإعدادات من المستودع
           find . -maxdepth 1 -not -name 'twrp' -not -name '.' -exec cp -r {} twrp/device/tecno/KL5/ \;
           cd twrp
           source build/envsetup.sh
           lunch twrp_KL5-eng
           export ALLOW_MISSING_DEPENDENCIES=true
           mka recoveryimage -j$(nproc --all)
+          
+          # --- تنفيذ فكرتك: نقل الملف لمكان مخصص ---
+          mkdir -p ../output_files
+          find out/target/product/ -name "recovery.img" -exec cp {} ../output_files/ \;
+          # ---------------------------------------
 
       - name: Upload Result
         uses: actions/upload-artifact@v4
         with:
-          name: TWRP-KL5-Final-Image
-          # هذا المسار الجديد سيبحث في كل المجلدات الناتجة لضمان إيجاد الملف
-          path: twrp/out/target/product/**/*.img
+          name: TWRP-Tecno-Spark30C
+          # الرفع من المجلد المخصص الذي أنشأناه
+          path: output_files/recovery.img
           if-no-files-found: error
