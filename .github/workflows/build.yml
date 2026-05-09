@@ -1,4 +1,4 @@
-name: Build TWRP Absolute Find
+name: Build TWRP Super Find
 on:
   workflow_dispatch:
 
@@ -33,17 +33,24 @@ jobs:
           source build/envsetup.sh
           lunch twrp_KL5-eng
           export ALLOW_MISSING_DEPENDENCIES=true
+          
+          # بناء الريكفري
           mka recoveryimage -j$(nproc --all)
           
-          # طباعة مسارات جميع ملفات الـ img الناتجة للتأكد (ستظهر في السجلات)
-          echo "--- قائمة بجميع ملفات الصور التي تم إنشاؤها ---"
-          find out/target/product/ -name "*.img"
-          echo "------------------------------------------"
+          # --- التعديل الجذري الجديد ---
+          # البحث عن الملف في كامل قرص الـ Runner ونسخه للمجلد الرئيسي للمستودع
+          echo "جاري البحث العميق عن ملف الريكفري..."
+          sudo find /home/runner/work/ -name "recovery.img" -exec cp {} $GITHUB_WORKSPACE/ \;
+          sudo find /home/runner/work/ -name "boot.img" -exec cp {} $GITHUB_WORKSPACE/ \;
+          
+          # التأكد من وجود الملف في مكان العمل الرئيسي
+          echo "قائمة الملفات في المجلد الرئيسي:"
+          ls -lh $GITHUB_WORKSPACE/*.img || echo "لم يتم العثور على ملفات IMG في المجلد الرئيسي"
 
       - name: Upload Result
         uses: actions/upload-artifact@v4
         with:
-          name: TWRP-Absolute-Search
-          # سنطلب من GitHub البحث في مجلد out بالكامل ورفع أي ملف img
-          path: twrp/out/target/product/**/*.img
+          name: TWRP-Tecno-Final-Target
+          # الرفع من المجلد الرئيسي للمستودع مباشرة
+          path: ./*.img
           if-no-files-found: error
