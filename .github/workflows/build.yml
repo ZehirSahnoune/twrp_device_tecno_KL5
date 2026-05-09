@@ -1,0 +1,43 @@
+name: Build TWRP
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Preparation
+        run: |
+          sudo apt update
+          sudo apt install gperf gcc-multilib gcc-10-multilib g++-multilib g++-10-multilib libc6-dev-i386 lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z1-dev libgl1-mesa-dev libxml2-utils xsltproc unzip bc pyzip lib32readline-dev lib32z-dev libgl1-mesa-dev python3 -y
+
+      - name: Install Repo
+        run: |
+          mkdir ~/bin
+          curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
+          chmod a+x ~/bin/repo
+          export PATH=~/bin:$PATH
+
+      - name: Sync TWRP Source
+        run: |
+          mkdir twrp && cd twrp
+          repo init --depth=1 -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-12.1
+          repo sync -j$(nproc --all)
+
+      - name: Build Recovery
+        run: |
+          cd twrp
+          mkdir -p device/tecno/KL5
+          cp -r ../* device/tecno/KL5/
+          source build/envsetup.sh
+          lunch twrp_KL5-eng
+          mka recoveryimage -j$(nproc --all)
+
+      - name: Upload Result
+        uses: actions/upload-artifact@v2
+        with:
+          name: TWRP-KL5-Built
+          path: twrp/out/target/product/KL5/recovery.img
